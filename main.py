@@ -86,18 +86,23 @@ class MainHandler(webapp2.RequestHandler):
             error = True
             fb3 = "Passwords do not match"
 
-        if not valid_email(emaily):
+        if emaily != "" and not valid_email(emaily):
             error = True
             fb4 = "Not a valid email"
 
         if error:
             content = pg(username,emaily,fb1,fb2,fb3,fb4)
+            self.response.write(content)
         else:
-            content = "Welcome " + username
+            self.redirect("welcome?usernm=" + str(username))
 
-        self.response.write(content)
+class welcompage(webapp2.RequestHandler):
+    def get(self):
+        username = self.request.get("usernm")
+        self.response.write("Welcome " + username + "!")
 
 
 app = webapp2.WSGIApplication([
-    ('/', MainHandler)
+    ('/', MainHandler),
+    ('/welcome',welcompage)
 ], debug=True)
